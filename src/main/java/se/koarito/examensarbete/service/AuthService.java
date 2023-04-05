@@ -38,7 +38,6 @@ public class AuthService {
     public AuthDto authenticate(AuthRequest authRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         var user = userRepository.findByEmail(authRequest.getEmail()).orElseThrow();
-        //todo - add email or id to payload
         var jwtToken = jwtService.generateToken(Map.of("UserId",user.getId()), user);
         return new AuthDto(jwtToken);
     }
