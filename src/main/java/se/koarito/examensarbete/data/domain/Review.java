@@ -1,9 +1,7 @@
 package se.koarito.examensarbete.data.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import se.koarito.examensarbete.data.enm.Status;
 
 import java.util.HashSet;
@@ -11,6 +9,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Review {
