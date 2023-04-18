@@ -1,12 +1,16 @@
 package se.koarito.examensarbete.data.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Feedback {
