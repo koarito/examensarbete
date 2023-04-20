@@ -21,7 +21,6 @@ public class UserService implements UserDetailsService {
     public Set<TeamDto> getUserTeams(String token) {
         long userId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
         return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(userId));
-
     }
 
     @Override

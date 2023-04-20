@@ -1,10 +1,12 @@
 package se.koarito.examensarbete.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.koarito.examensarbete.data.domain.Feedback;
 import se.koarito.examensarbete.data.domain.Review;
 import se.koarito.examensarbete.data.domain.User;
+import se.koarito.examensarbete.data.dto.ReviewDto;
 import se.koarito.examensarbete.data.enm.Status;
 import se.koarito.examensarbete.data.requestbody.CreateReviewRequest;
 import se.koarito.examensarbete.repository.FeedbackRepository;
@@ -23,7 +25,7 @@ public class ReviewService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public void createReview(CreateReviewRequest request, String token) {
+    public long createReview(CreateReviewRequest request, String token) {
         Set<User> reviewers = new HashSet<>(userRepository.findAllById(request.getReviewersIds()));
         long authorId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
         Review review = Review.builder()
@@ -38,9 +40,43 @@ public class ReviewService {
         Set<Feedback> grades = reviewers.stream().map(reviewer -> Feedback.builder().review(review)
                 .user(reviewer).build()).collect(Collectors.toSet());
         review.setGrades(grades);
-        reviewRepository.save(review);
-
+        return reviewRepository.save(review).getId();
     }
 
+    public long updateGrade(long feedbackId, String grade) {
+        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(EntityNotFoundException::new);
+        if (grade.equals("reset")) {
+            feedback.setGrade(null);
+        } else {
+            feedback.setGrade(Boolean.parseBoolean(grade));
+        }
+        feedbackRepository.save(feedback);
+
+        Review review = reviewRepository.findById(feedback.getReview().getId()).orElseThrow(EntityNotFoundException::new);
+
+        if (review.getGrades().stream().filter(Feedback::getGrade).count() > review.getGrades().size() / 2) {
+            review.setStatus(Status.COMPLETE);
+            reviewRepository.save(review);
+        } else {
+            review.setStatus(Status.INCOMPLETE);
+            reviewRepository.save(review);
+        }
+
+        return feedback.getId();
+    }
+
+    public ReviewDto getReview(long reviewId) {
+        return reviewRepository.getReviewById(reviewId);
+    }
+
+    public Set<ReviewDto> getUserReviews(String token) {
+        long authorId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
+        return reviewRepository.getReviewsByAuthorContaining(userRepository.getReferenceById(authorId));
+    }
+
+    public Set<ReviewDto> getAssignedReviews(String token) {
+        long userId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
+        return reviewRepository.getReviewsByReviewersContaining(userRepository.getReferenceById(userId));
+    }
 
 }
