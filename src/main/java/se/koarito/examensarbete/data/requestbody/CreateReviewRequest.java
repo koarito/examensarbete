@@ -13,8 +13,6 @@ public class CreateReviewRequest {
     private String gitLink;
     @Nonnull
     private String branch;
-    @Nonnull
-    private long authorId;
 
     private Set<Long> reviewersIds;
 

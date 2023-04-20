@@ -16,9 +16,12 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
+    private final JwtService jwtService;
 
-    public Set<TeamDto> getUserTeams(long userId) {
+    public Set<TeamDto> getUserTeams(String token) {
+        long userId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
         return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(userId));
+
     }
 
     @Override

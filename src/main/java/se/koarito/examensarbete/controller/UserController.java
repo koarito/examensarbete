@@ -2,6 +2,7 @@ package se.koarito.examensarbete.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/teams")
-    public Set<TeamDto> getUserTeams(@RequestParam long userId){
-        return userService.getUserTeams(userId);
+    public Set<TeamDto> getUserTeams(@RequestHeader(name = "Authorization") String token){
+        return userService.getUserTeams(token);
     }
 }

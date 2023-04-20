@@ -20,16 +20,17 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final FeedbackRepository feedbackRepository;
+    private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public void createReview(CreateReviewRequest request) {
+    public void createReview(CreateReviewRequest request, String token) {
         Set<User> reviewers = new HashSet<>(userRepository.findAllById(request.getReviewersIds()));
-
+        long authorId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
         Review review = Review.builder()
                 .jiraId(request.getJiraId())
                 .gitLink(request.getGitLink())
                 .branch(request.getBranch())
-                .author(userRepository.getReferenceById(request.getAuthorId()))
+                .author(userRepository.getReferenceById(authorId))
                 .reviewers(reviewers)
                 .status(Status.INCOMPLETE)
                 .build();
