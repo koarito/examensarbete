@@ -2,6 +2,7 @@ package se.koarito.examensarbete.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import se.koarito.examensarbete.data.domain.Feedback;
 import se.koarito.examensarbete.data.domain.Review;
@@ -22,17 +23,16 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final FeedbackRepository feedbackRepository;
-    private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public long createReview(CreateReviewRequest request, String token) {
+    public long createReview(CreateReviewRequest request) {
         Set<User> reviewers = new HashSet<>(userRepository.findAllById(request.getReviewersIds()));
-        long authorId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Review review = Review.builder()
                 .jiraId(request.getJiraId())
                 .gitLink(request.getGitLink())
                 .branch(request.getBranch())
-                .author(userRepository.getReferenceById(authorId))
+                .author(user)
                 .reviewers(reviewers)
                 .status(Status.INCOMPLETE)
                 .build();
@@ -69,14 +69,14 @@ public class ReviewService {
         return reviewRepository.getReviewById(reviewId);
     }
 
-    public Set<ReviewDto> getUserReviews(String token) {
-        long authorId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
-        return reviewRepository.getReviewsByAuthorContaining(userRepository.getReferenceById(authorId));
+    public Set<ReviewDto> getUserReviews() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return reviewRepository.getReviewsByAuthorContaining(userRepository.getReferenceById(user.getId()));
     }
 
-    public Set<ReviewDto> getAssignedReviews(String token) {
-        long userId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
-        return reviewRepository.getReviewsByReviewersContaining(userRepository.getReferenceById(userId));
+    public Set<ReviewDto> getAssignedReviews() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return reviewRepository.getReviewsByReviewersContaining(userRepository.getReferenceById(user.getId()));
     }
 
 }

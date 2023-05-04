@@ -1,10 +1,12 @@
 package se.koarito.examensarbete.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import se.koarito.examensarbete.data.domain.User;
 import se.koarito.examensarbete.data.dto.TeamDto;
 import se.koarito.examensarbete.repository.TeamRepository;
 import se.koarito.examensarbete.repository.UserRepository;
@@ -16,11 +18,10 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
-    private final JwtService jwtService;
 
-    public Set<TeamDto> getUserTeams(String token) {
-        long userId = (int) jwtService.extractClaim(token.substring(7), claims -> claims.get("UserId"));
-        return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(userId));
+    public Set<TeamDto> getUserTeams() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(user.getId()));
     }
 
     @Override
