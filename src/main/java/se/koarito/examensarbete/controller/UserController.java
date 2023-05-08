@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/teams")
-    public Set<TeamDto> getUserTeams(/*@RequestHeader(name = "Authorization") String token*/){
+    public Set<TeamDto> getUserTeams(){
         return userService.getUserTeams();
     }
 }

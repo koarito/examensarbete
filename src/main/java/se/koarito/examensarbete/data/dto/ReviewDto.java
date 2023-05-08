@@ -24,7 +24,7 @@ public interface ReviewDto {
     interface SimpleFeedback {
         long getId();
 
-        boolean getGrade();
+        Boolean getGrade();
 
         SimpleUser getUser();
     }

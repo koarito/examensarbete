@@ -1,6 +1,7 @@
 package se.koarito.examensarbete.data.domain;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -23,7 +24,7 @@ public class Feedback {
     @Id
     @GeneratedValue
     private long id;
-
+    @Column(nullable = true)
     private Boolean grade;
 
     @ManyToOne(cascade = CascadeType.ALL)

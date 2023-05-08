@@ -12,7 +12,7 @@ import java.util.Set;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     ReviewDto getReviewById(long id);
 
-    Set<ReviewDto> getReviewsByAuthorContaining(User author);
+    Set<ReviewDto> getReviewsByAuthor(User author);
 
     Set<ReviewDto> getReviewsByReviewersContaining(User user);
 

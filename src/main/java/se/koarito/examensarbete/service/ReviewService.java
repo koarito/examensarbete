@@ -32,7 +32,7 @@ public class ReviewService {
                 .jiraId(request.getJiraId())
                 .gitLink(request.getGitLink())
                 .branch(request.getBranch())
-                .author(user)
+                .author(userRepository.getReferenceById(user.getId()))
                 .reviewers(reviewers)
                 .status(Status.INCOMPLETE)
                 .build();
@@ -71,7 +71,7 @@ public class ReviewService {
 
     public Set<ReviewDto> getUserReviews() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return reviewRepository.getReviewsByAuthorContaining(userRepository.getReferenceById(user.getId()));
+        return reviewRepository.getReviewsByAuthor(userRepository.getReferenceById(user.getId()));
     }
 
     public Set<ReviewDto> getAssignedReviews() {

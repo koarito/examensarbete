@@ -17,7 +17,7 @@ import se.koarito.examensarbete.service.AuthService;
 public class AuthController {
     private final AuthService authService;
     @PostMapping("/signup")
-    public ResponseEntity<AuthDto> createUser(@RequestBody CreateUserRequest userRequest){
+    public ResponseEntity<Long> createUser(@RequestBody CreateUserRequest userRequest){
         return ResponseEntity.ok(authService.createUser(userRequest));
     }
 
