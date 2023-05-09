@@ -12,6 +12,7 @@ import se.koarito.examensarbete.repository.TeamRepository;
 import se.koarito.examensarbete.repository.UserRepository;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +21,36 @@ public class UserService implements UserDetailsService {
     private final TeamRepository teamRepository;
 
     public Set<TeamDto> getUserTeams() {
+        // Returns teams
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(user.getId()));
+        return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(user.getId())).stream()
+                .map(teamDto -> {
+                    Set<TeamDto.SimpleUser> developersWithoutUser = teamDto.getDevelopers().stream()
+                            .filter(simpleUser -> simpleUser.getId() != user.getId())
+                            .collect(Collectors.toSet());
+                    return new TeamDto() {
+                        @Override
+                        public long getId() {
+                            return teamDto.getId();
+                        }
+
+                        @Override
+                        public String getName() {
+                            return teamDto.getName();
+                        }
+
+                        @Override
+                        public SimpleUser getTeamLeader() {
+                            return teamDto.getTeamLeader();
+                        }
+
+                        @Override
+                        public Set<SimpleUser> getDevelopers() {
+                            return developersWithoutUser;
+                        }
+                    };
+                })
+                .collect(Collectors.toSet());
     }
 
     @Override

@@ -37,8 +37,11 @@ public class ReviewService {
                 .status(Status.INCOMPLETE)
                 .build();
 
-        Set<Feedback> grades = reviewers.stream().map(reviewer -> Feedback.builder().review(review)
-                .user(reviewer).build()).collect(Collectors.toSet());
+        Set<Feedback> grades = reviewers.stream()
+                .map(reviewer -> Feedback.builder().review(review)
+                        .user(reviewer)
+                        .build())
+                .collect(Collectors.toSet());
         review.setGrades(grades);
         return reviewRepository.save(review).getId();
     }
