@@ -11,5 +11,6 @@ public class CreateTeamRequest {
     private String name;
     @Nonnull
     private long teamLeaderId;
+    @Nonnull
     private Set<Long> devsIds;
 }

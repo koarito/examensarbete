@@ -1,7 +1,6 @@
 package se.koarito.examensarbete.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +29,8 @@ public class ReviewController {
     }
 
     @PatchMapping("/update/grade")
-    public long updateGrade(@RequestParam long feedbackId, @RequestParam String grade) {
-        return reviewService.updateGrade(feedbackId, grade);
+    public long updateGrade(@RequestParam long reviewId, @RequestParam String grade) {
+        return reviewService.updateGrade(reviewId, grade);
     }
 
     @GetMapping("/get/review/{reviewId}")

@@ -21,7 +21,7 @@ public class UserService implements UserDetailsService {
     private final TeamRepository teamRepository;
 
     public Set<TeamDto> getUserTeams() {
-        // Returns teams without the logged in user as a dev
+        // Returns teams without the active user as a dev
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return teamRepository.getTeamsByDevelopersContaining(userRepository.getReferenceById(user.getId())).stream()
                 .map(teamDto -> {

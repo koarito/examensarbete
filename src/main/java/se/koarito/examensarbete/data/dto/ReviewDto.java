@@ -1,5 +1,6 @@
 package se.koarito.examensarbete.data.dto;
 
+import se.koarito.examensarbete.data.enm.Grade;
 import se.koarito.examensarbete.data.enm.Status;
 
 import java.util.Set;
@@ -24,7 +25,7 @@ public interface ReviewDto {
     interface SimpleFeedback {
         long getId();
 
-        Boolean getGrade();
+        Grade getGrade();
 
         SimpleUser getUser();
     }
