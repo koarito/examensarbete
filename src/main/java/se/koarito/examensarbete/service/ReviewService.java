@@ -82,4 +82,32 @@ public class ReviewService {
         return reviewRepository.getReviewsByReviewersContaining(userRepository.getReferenceById(user.getId()));
     }
 
+    public long updateReview(long reviewId, CreateReviewRequest request) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        review.setGitLink(request.getGitLink());
+        review.setJiraId(request.getJiraId());
+        review.setBranch(request.getBranch());
+
+        Set<Long> reviewersIds = review.getReviewers().stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+
+
+        if (!reviewersIds.equals(request.getReviewersIds())) {
+            Set<Feedback> gradesToBeDeleted = new HashSet<>(review.getGrades());
+
+            Set<Feedback> grades = request.getReviewersIds().stream()
+                    .map(userId -> Feedback.builder()
+                            .review(review)
+                            .user(userRepository.getReferenceById(userId))
+                            .build())
+                    .collect(Collectors.toSet());
+            review.setGrades(grades);
+            reviewRepository.save(review);
+            feedbackRepository.deleteAll(gradesToBeDeleted);
+        }
+
+        return reviewRepository.save(review).getId();
+    }
+
 }

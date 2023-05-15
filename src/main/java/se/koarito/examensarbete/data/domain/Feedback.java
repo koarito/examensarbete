@@ -27,11 +27,11 @@ public class Feedback {
     @Column(nullable = true)
     private Boolean grade;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "review_id", referencedColumnName = "id")
     private Review review;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 }
