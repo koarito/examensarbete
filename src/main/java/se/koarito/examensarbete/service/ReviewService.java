@@ -92,7 +92,6 @@ public class ReviewService {
                 .map(User::getId)
                 .collect(Collectors.toSet());
 
-
         if (!reviewersIds.equals(request.getReviewersIds())) {
             Set<Feedback> gradesToBeDeleted = new HashSet<>(review.getGrades());
 
@@ -103,6 +102,7 @@ public class ReviewService {
                             .build())
                     .collect(Collectors.toSet());
             review.setGrades(grades);
+            review.setReviewers(new HashSet<>(userRepository.findAllById(request.getReviewersIds())));
             reviewRepository.save(review);
             feedbackRepository.deleteAll(gradesToBeDeleted);
         }

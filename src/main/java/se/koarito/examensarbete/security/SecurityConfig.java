@@ -39,7 +39,7 @@ public class SecurityConfig {
             corsConfiguration.addAllowedMethod("DELETE");
             corsConfiguration.addAllowedMethod("POST");
             corsConfiguration.addAllowedMethod("GET");
-            corsConfiguration.addAllowedMethod("PATCH");
+            corsConfiguration.addAllowedMethod("PUT");
             return corsConfiguration;
         });
 
